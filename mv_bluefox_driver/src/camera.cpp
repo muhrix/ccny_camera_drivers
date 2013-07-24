@@ -27,7 +27,6 @@ Camera::Camera(ros::NodeHandle _comm_nh, ros::NodeHandle _param_nh) :
   //Auto Exposure "on"
   pnode.param("auto_exposure", auto_exposure_, true);
 
-
 //  rotate = false;
   // pull other configuration //
 //  pnode.param("device", device);

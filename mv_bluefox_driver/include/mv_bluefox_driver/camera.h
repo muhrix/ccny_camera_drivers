@@ -69,6 +69,7 @@ private:
   bool rotate;
   bool use_color_; ///< To indicate whether we want to use 3-channel (RGB) or 1-channel (grayscale) images
   bool auto_gain_; ///< To turn/on auto gain
+  bool auto_exposure_;///<To turn/on auto exposure
   std::string camera_calibration_url_;
   /* Old:
    image_transport::ImageTransport it;
