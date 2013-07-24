@@ -1,11 +1,11 @@
 all: installed
 
 BUILD_DIR   = build
-TARBALL_PREFIX = mvVirtualDevice-x86_ABI2-2.1.4
+TARBALL_PREFIX = mvBlueFOX-x86_ABI2-2.5.10
 TARBALL     = $(BUILD_DIR)/$(TARBALL_PREFIX).tgz
-TARBALL_URL = http://www.matrix-vision.com/mvvirtualdevice-442.html?file=tl_files/mv11/support/mvIMPACT_Acquire/01/$(TARBALL_PREFIX).tgz
+TARBALL_URL = http://www.matrix-vision.com/USB2.0-single-board-camera-mvbluefox-mlc.html?file=tl_files/mv11/support/mvIMPACT_Acquire/01/$(TARBALL_PREFIX).tgz
 UNPACK_CMD  = tar zxf
-SOURCE_DIR  = $(BUILD_DIR)/mvIMPACT_acquire-x86-2.1.4
+SOURCE_DIR  = $(BUILD_DIR)/mvIMPACT_acquire-x86-2.5.10
 MD5SUM_FILE = $(TARBALL_PREFIX).tgz.md5sum
 
 include $(shell rospack find mk)/download_unpack_build.mk
