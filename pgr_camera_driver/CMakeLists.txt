@@ -1,49 +1,37 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+project(pgr_camera_driver)
 
-set(CMAKE_CXX_FLAGS "-lflycapture")
+find_package(catkin REQUIRED COMPONENTS 
+  dynamic_reconfigure message_generation roscpp 
+  tf image_transport camera_info_manager polled_camera
+)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+generate_dynamic_reconfigure_options(cfg/PGRCamera.cfg)
 
-rosbuild_init()
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES fiducials
+  DEPENDS OpenCV
+)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+include_directories(include 
+  /usr/include/flycapture
+  ${catkin_INCLUDE_DIRS})
 
-rosbuild_add_boost_directories()
+add_library(libpgr_camera_driver
+  src/libpgrcam/pgr_camera.cpp)
 
-# Generate dynamic parameters
-rosbuild_find_ros_package(dynamic_reconfigure)
-include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
-gencfg()
+add_executable(pgr_camera_node
+  src/nodes/pgr_camera_node.cpp)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
+target_link_libraries(pgr_camera_node
+  libpgr_camera_driver
+  flycapture pthread
+  ${catkin_LIBRARIES})
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+add_dependencies(pgr_camera_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
-set(PGR_EXECUTABLE   pgr_camera_node)
-
-add_subdirectory(src)
-#rosbuild_add_executable(${PGR_EXECUTABLE} src/pgr_camera_node.cpp)
-
-# TODO: wrong ??????????????
-########## TARGETING LIBRARIES (must go last) ##################
-#target_link_libraries(${PGR_EXECUTABLE} flycapture)
-# ??????????????????
+install(PROGRAMS
+  pgr_camera_node
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

@@ -1,0 +1,47 @@
+<package>
+        <name>pgr_camera_driver</name>
+        <version>1.0.0</version>
+	<description>
+		A ROS node to provide access to Point Grey Research cameras, using the
+		FlyCapture2 SDK API
+		Acknowledgement: This package is based largely on the prosilica_camera package,
+		by Patrick Mihelich (http://www.ros.org/wiki/prosilica_camera).
+		Originally developed by Patrick Bouffard.
+		Reason for branching from original package: 
+		<ol>
+		    <li>For better calibration purposes (with ROS camera_calibration pkg) it needs to use the camera_info_manager package. See example launch files.</li>
+		    <li>Adding support for color cameras</li>
+		</ol>
+	</description>
+	<author> Mantained by Carlos Jaramillo (Original Author: Patrick Bouffard)</author>
+	<maintainer email="cjarmillo@gc.cuny.edu">Carlos Jarmillo</maintainer>
+	<license>BSD</license>
+	<!--
+	<review status="unreviewed" notes="Unstable (W.I.P.)" />
+	-->
+	<url>http://ros.org/wiki/pgr_camera_driver</url>
+
+	<buildtool_depend>catkin</buildtool_depend>
+
+	<build_depend>dynamic_reconfigure</build_depend>
+	<build_depend>roscpp</build_depend>
+	<build_depend>roslib</build_depend>
+	<build_depend>std_msgs</build_depend>
+	<build_depend>diagnostic_msgs</build_depend>
+	<build_depend>diagnostic_updater</build_depend>
+	<build_depend>sensor_msgs</build_depend>
+	<build_depend>image_transport</build_depend>
+	<build_depend>driver_base</build_depend>
+	<build_depend>camera_calibration_parsers</build_depend>
+	<build_depend>camera_info_managers</build_depend>
+	<build_depend>polled_camera</build_depend>
+	<build_depend>self_test</build_depend>
+
+	<run_depend>dynamic_reconfigure</run_depend>
+	<export>
+
+		<rosdoc config="rosdoc.yaml" />
+	</export>
+</package>
+
+
