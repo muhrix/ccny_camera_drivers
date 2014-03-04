@@ -1,65 +1,66 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+set(TARGET ${CMAKE_HOST_SYSTEM_PROCESSOR})
 
-rosbuild_init()
+project(mv_bluefox_driver)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs image_transport camera_info_manager nodelet dynamic_reconfigure driver_base)
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+find_package(Boost REQUIRED COMPONENTS signals system)
 
-# boost
-rosbuild_add_boost_directories()
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES mv_bluefox_nodelet
+  CATKIN_DEPENDS roscpp sensor_msgs image_transport camera_info_manager nodelet dynamic_reconfigure driver_base
+#  DEPENDS system_lib
+)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
+include_directories(
+  include 
+  ${catkin_INCLUDE_DIRS}
+)
 
-# TODO: add dynamic reconfiguration
-#rosbuild_find_ros_package(dynamic_reconfigure)
-#include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
-#gencfg()
+add_library(mvDeviceManager SHARED IMPORTED)
+set_target_properties(mvDeviceManager PROPERTIES IMPORTED_LOCATION "${PROJECT_SOURCE_DIR}/lib/${TARGET}/libmvDeviceManager.so.2.6.1")
 
-# set(MVIMPACT_LIBRARIES   mvDeviceManager mvBlueFOX??? dl??? )
-set(MVIMPACT_LIBRARIES   mvDeviceManager) # The mvDeviceManager library (library is external, and should be able to be found in the system path, such as /usr/local/lib/ )
+add_library(mv_bluefox_nodelet
+  src/mv_bluefox_nodelet.cpp
+  src/camera.cpp
+)
 
-################################################################
-# Build libraries
-################################################################
+add_executable(mv_bluefox_node src/mv_bluefox_node.cpp src/camera.cpp)
 
-rosbuild_add_library(mv_bluefox_driver_nodelet src/nodelets.cpp src/camera.cpp)
+add_dependencies(mv_bluefox_nodelet ${catkin_EXPORTED_TARGETS} mvDeviceManager)
+add_dependencies(mv_bluefox_node ${catkin_EXPORTED_TARGETS} mvDeviceManager)
 
-################################################################
-# Build mv_bluefox_driver (Node and nodelet)
-################################################################
+target_link_libraries(mv_bluefox_nodelet
+  mvDeviceManager
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+target_link_libraries(mv_bluefox_node
+  mvDeviceManager
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
-# link the nodelet to the mvDeviceManager library (library is external, and should be able to be found in the system path, such as /usr/local/lib/ )
-target_link_libraries(mv_bluefox_driver_nodelet
-         ${MVIMPACT_LIBRARIES}
-         boost_signals 
-         boost_system
-         ) 
- 
-rosbuild_add_executable(camera_node src/camera_node.cpp src/camera.cpp)
-target_link_libraries(camera_node
-         ${MVIMPACT_LIBRARIES}
-         boost_signals 
-         boost_system
-         )
+## Mark executables and/or libraries for installation
+install(TARGETS mv_bluefox_nodelet mv_bluefox_node
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+## Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+)
+
+## Mark other files for installation (e.g. launch and bag files, etc.)
+# install(FILES
+#   # myfile1
+#   # myfile2
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
+

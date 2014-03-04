@@ -3,7 +3,7 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <camera_info_manager/camera_info_manager.h>
-#include <ccny_mvVirtualDevice/mvIMPACT_CPP/mvIMPACT_acquire.h>
+#include "mvIMPACT_CPP/mvIMPACT_acquire.h"
 
 //#define DEVELOP
 #define PRESS_A_KEY getchar();

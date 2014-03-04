@@ -8,7 +8,7 @@
 #include <camera_info_manager/camera_info_manager.h>
 #include <image_transport/image_transport.h>
 
-#include <mv_bluefox_driver/camera.h>
+#include "mv_bluefox_driver/camera.h"
 
 #include <errno.h>
 
